@@ -43,8 +43,8 @@ def load_all():
 
     # If World missing, add a simple (unweighted) mean for context (not population-weighted)
     if "World" not in co2_panel["country"].unique():
-        world = (co2_panel.groupby("year")["co2_t_per_cap"]
-                 .mean(skipna=True).reset_index())
+        # pandas GroupBy.mean on this runtime doesn't take skipna, so just call .mean()
+        world = (co2_panel.groupby("year", as_index=False)["co2_t_per_cap"].mean())
         world["country"] = "World"
         co2_panel = pd.concat([co2_panel, world[["country","year","co2_t_per_cap"]]], ignore_index=True)
 
